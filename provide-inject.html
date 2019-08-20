@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+    <div id="app">
+        <child></child>
+    </div>
+</body>
+<script>
+/* 这对选项需要一起使用，以允许一个祖先组件向其所有子孙后代注入一个依赖，不论组件层次有多深，并在起上下游关系成立的时间里始终生效。
+inject 选项应该是：一个字符串数组,
+也可以是一个对象，可指定默认值,可重命名对象 */
+Vue.component('child-child',{
+    template:'<div>这是子组件的子组件.这是从父组件注入的信息name:{{renameObj.name}}</div>',
+    inject:{
+        renameObj:{
+            from:"objFromFather",
+            default:{}
+        }
+    }
+})    
+Vue.component('child',{
+    template:'<div>这是子组件,这是从父组件注入的信息name:{{objFromFather.name}}<div><child-child></child-child>',
+    inject:['objFromFather'],
+    mounted(){
+        console.log(this.objFromFather)
+    }
+})
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue!'
+  },
+  provide:{
+      objFromFather:{
+          name:'father'
+      }
+  }
+})
+
+</script>
+</html>
